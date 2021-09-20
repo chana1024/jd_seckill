@@ -1,8 +1,10 @@
 import json
-import random
-import requests
 import os
+import random
 import time
+import webbrowser
+
+import requests
 
 from config import global_config
 
@@ -99,7 +101,10 @@ def response_status(resp):
 
 def open_image(image_file):
     if os.name == "nt":
-        os.system('start ' + image_file)  # for Windows
+        # os.system('start ' + image_file)  # for Windows
+        # os.system("start [F:/jd_maotai_seckill/qr_code.html]")
+        url = 'file:///F:/jd_maotai_seckill/qr_code.html'
+        webbrowser.open(url, new=2)  # open in new tab
     else:
         if os.uname()[0] == "Linux":
             if "deepin" in os.uname()[2]:

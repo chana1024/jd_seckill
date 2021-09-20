@@ -33,6 +33,7 @@ class SpiderSession:
         self.session = self._init_session()
 
     def _init_session(self):
+        requests.adapters.DEFAULT_RETRIES = 5
         session = requests.session()
         session.headers = self.get_headers()
         return session
@@ -43,7 +44,7 @@ class SpiderSession:
                           "q=0.9,image/webp,image/apng,*/*;"
                           "q=0.8,application/signed-exchange;"
                           "v=b3",
-                "Connection": "keep-alive"}
+                "Connection": "close"}
 
     def get_user_agent(self):
         return self.user_agent
@@ -294,7 +295,7 @@ class JdSeckill(object):
 
         if self.qrlogin.is_login:
             self.nick_name = self.get_username()
-            self.spider_session.save_cookies_to_local(self.nick_name)
+            self.spider_session.save_cookies_to_local("180")
         else:
             raise SKException("二维码登录失败！")
 
@@ -511,6 +512,12 @@ class JdSeckill(object):
         try:
             resp_json = parse_json(resp.text)
         except Exception:
+            print("Connection refused by the server..")
+            print("Let me sleep for 5 seconds")
+            print("ZZzzzz...")
+            time.sleep(5)
+            print("Was a nice sleep, now let me continue...")
+
             raise SKException('抢购失败，返回信息:{}'.format(resp.text[0: 128]))
 
         return resp_json
@@ -596,6 +603,11 @@ class JdSeckill(object):
             resp_json = parse_json(resp.text)
         except Exception as e:
             logger.info('抢购失败，返回信息:{}'.format(resp.text[0: 128]))
+            print("Connection refused by the server..")
+            print("Let me sleep for 5 seconds")
+            print("ZZzzzz...")
+            time.sleep(5)
+            print("Was a nice sleep, now let me continue...")
             return False
         # 返回信息
         # 抢购失败：
